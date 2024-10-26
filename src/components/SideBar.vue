@@ -8,7 +8,7 @@
                 <img src="@/assets/logo.png" alt="Logo" />
               </div>
             </div>
-            <div class="text">山羊の前端小窝</div>
+            <div class="text">WHAT2EAT</div>
           </a>
         </li>
         <li v-for="(item, index) in menuItems" :key="index" :class="{ active: activeIndex === index }" @click="setActive(index)">
@@ -30,17 +30,24 @@
         activeIndex: 0,
         menuItems: [
         { text: "Foods I like", iconSrc: require("@/assets/Foods I like.png")},
-      { text: "Foods I have", iconSrc: require("@/assets/Foods I have.png") },
-      { text: "AI What2Eat", iconSrc: require("@/assets/AI Chatbot.png") },
-      { text: "My Profile", iconSrc: require("@/assets/My Profile.png") },
+        { text: "Foods I have", iconSrc: require("@/assets/Foods I have.png") },
+        { text: "AI What2Eat", iconSrc: require("@/assets/AI Chatbot.png") },
+        { text: "My Profile", iconSrc: require("@/assets/My Profile.png") },
         ],
       };
     },
     methods: {
       setActive(index) {
-        this.activeIndex = index;
+        this.activeIndex = index; // 这里直接传递标识符，而不是动态生成的字符串
+        let contentMap = {
+          0: 'FoodsILike',
+          1: 'FoodsIHave',
+          2: 'AIWhat2Eat',
+          3: 'MyProfile'
+        };
+        this.$emit('menu-selected', contentMap[index]);
       },
-    },
+    }
   };
   </script>
   
@@ -162,7 +169,7 @@
   }
   
   .icon i {
-    font-size: 30px;
+    font-size: 20px;
     z-index: 999;
   }
   
@@ -171,7 +178,7 @@
     height: 70px;
     display: flex;
     align-items: center;
-    font-size: 20px;
+    font-size: 16px;
     color: #333;
     padding-left: 15px;
     text-transform: uppercase;
