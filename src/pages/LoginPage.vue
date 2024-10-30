@@ -49,6 +49,11 @@ export default {
       try {
         const response = await axios.post('http://localhost:8000/users/login', this.loginForm);
         console.log("Login successful:", response.data);
+
+        localStorage.setItem("username", response.data.username);
+        const userId = response.data.user_id; // 获取 user_id
+        localStorage.setItem('user_id', userId); // 存储 user_id
+        
         this.$router.push('/home');
       } catch (error) {
         console.error("Login failed:", error.response ? error.response.data : error.message);
