@@ -11,7 +11,12 @@
       </el-col>
 
       <!-- 右边的转盘部分 -->
-      <el-col :span="12">
+      <el-col :span="12" style="position: relative;">
+        <!-- 添加指针 -->
+        <div class="wheel-pointer">
+          <i class="el-icon-arrow-up"></i>
+        </div>
+        <!-- 转盘组件 -->
         <lucky-wheel
           ref="luckyWheel"
           :width="300"
@@ -20,8 +25,8 @@
           :buttons="wheelButtons"
           @start="handleStart"
           @end="handleEnd"
+          @click="startSpin"  
         />
-        <el-button @click="startSpin" type="primary" style="margin-top: 20px;">Spin</el-button>
       </el-col>
     </el-row>
   </div>
@@ -42,37 +47,70 @@ export default {
         { name: "Sandwich", type: "Lunch" },
         { name: "Pancake", type: "Breakfast" },
       ],
-      wheelPrizes: [
-        { text: "Chicken", background: '#ff9999' },
-        { text: "Grape", background: '#99ccff' },
-        { text: "Water", background: '#99ff99' },
-      ],
+      selectedFoods: [], 
+      wheelPrizes: [],
       wheelButtons: [
         {
-          radius: '40%',
+          radius: '20%', 
           text: 'Start',
           background: '#ff8a00',
-          fonts: [{ text: 'Start', fontColor: '#fff', fontSize: '20px' }],
+          fonts: [{ text: 'Start', fontColor: '#fff', fontSize: '16px' }], 
         },
       ],
     };
   },
   methods: {
+    handleSelectionChange(selection) {
+      this.selectedFoods = selection;
+
+      this.wheelPrizes = this.selectedFoods.map((food, index) => ({
+        text: food.name,
+        background: this.getPrizeBackground(index),
+        fonts: [
+          { text: food.name, top: '50%', fontColor: '#000', fontSize: '16px' },
+        ],
+      }));
+    },
+
+    getPrizeBackground(index) {
+      const colors = ['#ff9999', '#99ccff', '#99ff99', '#ffcc99'];
+      return colors[index % colors.length];
+    },
+
     startSpin() {
+      if (this.wheelPrizes.length === 0) {
+        this.$message.warning("Please select at least one food item before spinning.");
+        return;
+      }
       if (this.$refs.luckyWheel) {
         this.$refs.luckyWheel.play();
+
+        setTimeout(() => {
+          const prizeIndex = Math.floor(Math.random() * this.wheelPrizes.length);
+          this.$refs.luckyWheel.stop(prizeIndex);
+        }, 1000 + Math.random() * 2000);
       }
     },
+
     handleStart() {
       console.log("Spin started");
     },
+
     handleEnd(prize) {
-      this.$message.success(`You got: ${prize.fonts[0].text}`);
+      this.$message.success(`You got: ${prize.text}`);
     },
   },
 };
 </script>
 
 <style scoped>
-/* 样式根据需要添加 */
+.wheel-pointer {
+  position: absolute;
+  top: -100px; 
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 40px; 
+  color: black;
+  z-index: 9999; 
+}
 </style>

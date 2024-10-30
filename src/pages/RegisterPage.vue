@@ -39,24 +39,46 @@
     </div>
   </template>
   
-  <script>
-  export default {
-    data() {
-      return {
-        registerForm: {
-          username: '',
-          email: '',
-          password: '',
-          confirmPassword: ''
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      registerForm: {
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      }
+    };
+  },
+  methods: {
+    async onRegister() {
+      if (this.registerForm.password !== this.registerForm.confirmPassword) {
+        alert("Passwords do not match");
+        return;
+      }
+
+      try {
+        const response = await axios.post('http://localhost:8000/users/register', {
+          username: this.registerForm.username,
+          useremail: this.registerForm.email,  
+          userpassword: this.registerForm.password
+        }, {
+        headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      };
-    },
-    methods: {
-      onRegister() {
-        console.log("Register form submitted:", this.registerForm);
+      );
+        console.log("Registration successful:", response.data);
+        // this.$router.push('/login');
+      } catch (error) {
+        console.error("Registration failed:", error.response ? error.response.data : error.message);
       }
     }
-  };
+  }
+};
   </script>
   
   <style scoped>

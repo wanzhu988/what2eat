@@ -32,7 +32,9 @@
   </div>
 </template>
 
+
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -43,9 +45,14 @@ export default {
     };
   },
   methods: {
-    onLogin() {
-      // 登录逻辑处理
-      console.log("Login form submitted:", this.loginForm);
+    async onLogin() {
+      try {
+        const response = await axios.post('http://localhost:8000/users/login', this.loginForm);
+        console.log("Login successful:", response.data);
+        this.$router.push('/home');
+      } catch (error) {
+        console.error("Login failed:", error.response ? error.response.data : error.message);
+      }
     }
   }
 };
